@@ -18,14 +18,14 @@ enables (script) profiling through setting code breakpoints and providing memory
 
 Just checkout the repository and use the classes as you desire...
 
-    git clone https://gitlab.bjoernbartels.earth/php/simpletable.git
+    git clone https://gitlab.bjoernbartels.earth/php/profiler.git
 
 
 Another alternative for downloading the project is to grab it via `curl`, and
 then pass it to `tar`:
 
     cd my/project/dir
-    curl -#L https://gitlab.bjoernbartels.earth/php/simpletable/repository/archive.tar.gz?ref=master | tar xz --strip-components=1
+    curl -#L https://gitlab.bjoernbartels.earth/php/profiler/repository/archive.tar.gz?ref=master | tar xz --strip-components=1
 
 
 
