@@ -1,1 +1,7 @@
+## zendstudio/eclipse
+.project
+.build*
+.settings
+
+## obsolete files
 src_ns
