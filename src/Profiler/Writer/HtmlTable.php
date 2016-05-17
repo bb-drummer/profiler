@@ -1,12 +1,14 @@
 <?php
 
 /**
- * ZendLCARS API
+ * profiler HTML table writer
  *
- * @category  ZendLCARS API
- * @package   Profiler
- * @copyright Copyright (c) 2009 Bjoern Bartels, <info@dragon-projects.net>
- * @license   http://framework.zend.com/license/new-bsd     New BSD License
+ * @category       php
+ * @package        Profiler
+ * @author         Björn Bartels <coding@bjoernbartels.earth>
+ * @link           https://gitlab.bjoernbartels.earth/groups/php
+ * @license        http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @copyright      copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
  */
 
 /**
@@ -14,13 +16,6 @@
  */
 require_once 'Profiler/Writer/Abstract.php';
 
-/**
- * @category  ZendLCARS API
- * @package   Profiler
- * @author    Bjoern Bartels <info@dragon-projects.net>
- * @copyright Copyright (c) 2009 Bjoern Bartels, <info@dragon-projects.net>
- * @license   http://framework.zend.com/license/new-bsd     New BSD License
- */
 class Profiler_Writer_HtmlTable
     extends Profiler_Writer_Abstract
 {

@@ -333,9 +333,9 @@ class Profiler
      */
     public function setWriter($writer)
     {
-        if (is_string($writer)) {
+        if (is_string($writer) && file_exists(__DIR__.'/Profiler/Writer/'.$writer.'.php')) {
             $className = 'Profiler_Writer_' . $writer;
-            Zend_Loader::loadClass($className);
+            require_once (__DIR__.'/Profiler/Writer/'.$writer.'.php');
             $writer = new $className($this);
         }
         
