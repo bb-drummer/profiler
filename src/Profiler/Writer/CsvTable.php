@@ -77,7 +77,7 @@ class CsvTable
         $rawStartTime   = $checkpoint->startTime;
         $rawStopTime    = $checkpoint->stopTime;
         $startTime      = number_format($rawStartTime - $appStartTime, $timeFloating, ',', '');
-        $stopTime       = number_format($rawStopTime - $appStartTime,  $timeFloating, ',', '');
+        $stopTime       = number_format($rawStopTime - $appStartTime, $timeFloating, ',', '');
         $diffTime       = number_format($rawStopTime - $rawStartTime, $timeFloating, ',', '');
         
         $memoryFloating = $profiler->getMemoryFloating();
@@ -89,7 +89,7 @@ class CsvTable
         
         $indention      = str_repeat('>', $checkpoint->depth * 1);
         
-        $row = '"'.$index.'","'.$indention.''.$checkpoint->title.'","'.$startTime.'s","'.$stopTime.'s","'.$diffTime.'s","'.$startMemory.'","'.$stopMemory.'","'.$diffMemory.'"' . PHP_EOL;
+        $row = '"' . $index . '","' . $indention . '' . $checkpoint->title . '","' . $startTime . 's","' . $stopTime . 's","' . $diffTime . 's","' . $startMemory . '","' . $stopMemory . '","' . $diffMemory . '"' . PHP_EOL;
         
         return $row;
     }

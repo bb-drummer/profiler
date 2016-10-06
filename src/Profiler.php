@@ -199,7 +199,7 @@ class Profiler
      * return current Unix timestamp with microseconds
      * 
      * @access public
-     * @return integer
+     * @return double
      */
     public static function getMicrotime()
     {
@@ -312,8 +312,7 @@ class Profiler
             $this->divisor = 1048576;
         } elseif ($divisorSign == self::GIGABYTE) {
             $this->divisor = 1073741824;
-        }
-        else
+        } else
         {
             throw new Exception(
                 sprintf(
@@ -353,7 +352,7 @@ class Profiler
      * 
      * @access public
      * @param  boolean $active
-     * @return integer
+     * @return Profiler
      */
     public function setActive($active = true)
     {
@@ -393,7 +392,7 @@ class Profiler
      */
     public function setWriter($writer)
     {
-        if (is_string($writer) && file_exists(__DIR__.'/Profiler/Writer/'.$writer.'.php')) {
+        if (is_string($writer) && file_exists(__DIR__ . '/Profiler/Writer/' . $writer . '.php')) {
             $className = 'Profiler\\Writer\\' . $writer;
             $writer = new $className($this);
         }
