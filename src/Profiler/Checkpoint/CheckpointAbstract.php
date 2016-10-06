@@ -9,11 +9,6 @@ use Profiler\Checkpoint\CheckpointException;
 
 /**
  * profiler checkpoint abstract
- *
- * @property float $startTime
- * @property float $stopTime
- * @property integer $startMemory
- * @property integer $stopMemory
  * 
  * @category  php
  * @package   Profiler
@@ -21,6 +16,11 @@ use Profiler\Checkpoint\CheckpointException;
  * @link      https://gitlab.bjoernbartels.earth/groups/php
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  * @copyright copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
+ *
+ * @property float $startTime
+ * @property float $stopTime
+ * @property integer $startMemory
+ * @property integer $stopMemory
  */
 abstract class CheckpointAbstract implements CheckpointInterface
 {

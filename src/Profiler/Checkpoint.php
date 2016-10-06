@@ -10,11 +10,6 @@ use Profiler\Checkpoint\CheckpointAbstract;
 
 /**
  * profiler checkpoint object
- *
- * @property float $startTime
- * @property float $stopTime
- * @property integer $startMemory
- * @property integer $stopMemory
  * 
  * @category  php
  * @package   Profiler
@@ -22,6 +17,11 @@ use Profiler\Checkpoint\CheckpointAbstract;
  * @link      https://gitlab.bjoernbartels.earth/groups/php
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  * @copyright copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
+ *
+ * @property float $startTime
+ * @property float $stopTime
+ * @property integer $startMemory
+ * @property integer $stopMemory
  */
 class Checkpoint extends CheckpointAbstract
 {
