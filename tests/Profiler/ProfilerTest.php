@@ -475,23 +475,37 @@ class ProfilerTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Profiler->stop() with no parameter throwing an error
      *
-     * @expectedException TypeError
+     * @ _ expectedException TypeError
      */
     public function testStopWithNoParameterThrowsError() 
     {
-        
-        $this->profiler->stop();
+        $phpVersion = phpversion();
+        if ( version_compare($phpVersion, "7.0.0", ">=") ) {
+        	$this->expectException(TypeError::class);
+        	$this->profiler->stop();
+        } else {
+        	$test = @$this->profiler->stop();
+        	$this->assertFalse($test);
+        }
     }
     
     /**
      * Tests Profiler->stop() with invalid parameter throwing an error
      *
-     * @expectedException TypeError
+     * @ _ expectedException TypeError
      */
     public function testStopWithInvalidParameterThrowsError() 
     {
+
+    	$phpVersion = phpversion();
+    	if ( version_compare($phpVersion, "7.0.0", ">=") ) {
+    		$this->expectException(TypeError::class);
+    		$this->profiler->stop();
+    	} else {
+    		$test = @$this->profiler->stop('stop it!');
+    		$this->assertFalse($test);
+    	}
         
-        $this->profiler->stop('stop it!');
     }
     
     /**

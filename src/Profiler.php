@@ -47,7 +47,7 @@ class Profiler
      * initial profiling starting checkpoint
      * 
      * @access protected
-     * @var    Profiler\Checkpoint\CheckpointAbstract
+     * @var    CheckpointAbstract
      */
     protected $application = null;
     
@@ -55,7 +55,7 @@ class Profiler
      * internal dummy checkpoint
      * 
      * @access protected
-     * @var    Profiler\Checkpoint\CheckpointAbstract
+     * @var    CheckpointAbstract
      */
     protected $dummy = null;
     
@@ -114,12 +114,20 @@ class Profiler
      * @var    boolean
      */
     protected $useRealMemoryUsage = false;
+
+    /**
+     * is this profiler active?
+     *
+     * @access protected
+     * @var    boolean
+     */
+    protected $active = true;
     
     /**
      * writer instance
      * 
      * @access protected
-     * @var    Profiler\Writer\WriterInterface
+     * @var    WriterInterface
      */
     protected $writer = null;
     
@@ -154,7 +162,6 @@ class Profiler
      * @access protected
      * @param  array $options
      * @throws Profiler\Exception
-     * @return void
      */
     protected function __construct($options = array())
     {
@@ -299,7 +306,7 @@ class Profiler
      * 
      * @access public
      * @param  string $divisorSign
-     * @throws Profiler_Exception
+     * @throws Profiler\Exception
      * @return Profiler
      */
     public function setDivisorSign($divisorSign = self::MEGABYTE)

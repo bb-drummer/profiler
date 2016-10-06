@@ -20,8 +20,7 @@ use Profiler\Writer\WriterAbstract;
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  * @copyright copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
  */
-class CsvTable
-    extends WriterAbstract
+class CsvTable extends WriterAbstract
 {
     /**
      * get complete profiler output

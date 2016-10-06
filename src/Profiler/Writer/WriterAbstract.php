@@ -34,7 +34,6 @@ abstract class WriterAbstract implements WriterInterface
      * 
      * @access public
      * @param  Profiler $profiler
-     * @return void
      */
     public function __construct(Profiler $profiler)
     {

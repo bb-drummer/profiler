@@ -1,4 +1,7 @@
 <?php
+/**
+ * profiler checkpoint object
+ */
 namespace Profiler;
 
 use Profiler\Profiler;
@@ -8,6 +11,11 @@ use Profiler\Checkpoint\CheckpointAbstract;
 /**
  * profiler checkpoint object
  *
+ * @property float $startTime
+ * @property float $stopTime
+ * @property integer $startMemory
+ * @property integer $stopMemory
+ * 
  * @category  php
  * @package   Profiler
  * @author    Björn Bartels <coding@bjoernbartels.earth>
@@ -24,7 +32,6 @@ class Checkpoint extends CheckpointAbstract
      * @access public
      * @param  string  $title
      * @param  integer $depth
-     * @return void
      */
     public function __construct($title, $depth = null)
     {

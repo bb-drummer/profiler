@@ -24,7 +24,6 @@ class Dummy extends CheckpointAbstract
      * @access public
      * @param  string  $title
      * @param  integer $depth
-     * @return void
      */
     public function __construct($title, $depth = null)
     {
