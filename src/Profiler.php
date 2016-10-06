@@ -526,7 +526,7 @@ class Profiler
             );
         }
         
-        return $this->writer->get($this);
+        return $this->writer->get();
     }
     
     /**
