@@ -556,6 +556,11 @@ class Profiler
         return $this;
     }
     
+    /**
+     * destroys current profiler instance
+     * 
+     * @access public
+     */
     public static function destroy() 
     {
         self::$instance = null;

@@ -19,12 +19,16 @@ use Profiler\Profiler;
 interface WriterInterface
 {
     /**
+     * get profiler output
+     * 
      * @access public
      * @return string
      */
     public function get();
     
     /**
+     * class constructor
+     * 
      * @access public
      * @param  Profiler $profiler
      * @return void
