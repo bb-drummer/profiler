@@ -1,0 +1,29 @@
+checks:
+    php: true
+filter:
+    paths:
+        - src/*
+    excluded_paths:
+        - test/*
+        - vendor/*
+        - public/*
+        - docs/*
+coding_style:
+    php: {  }
+build:
+    environment:
+        php: '7.0'
+        timezone: 'Europe/Berlin'
+    tests:
+        before:
+            - php -m
+            - phpunit --version
+            - wget http://getcomposer.org/composer.phar
+            - php composer.phar install
+        override:
+            -
+                command: 'phpunit -c ./tests/phpunit.xml --coverage-clover=phpagstract.clover'
+                coverage:
+                    file: 'phpagstract.clover'
+                    format: 'php-clover'
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="bootstrap.php" colors="true"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         cacheTokens="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         mapTestClassNameToCoveredClassName="true"
+         printerClass="PHPUnit_TextUI_ResultPrinter"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="true"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         stopOnRisky="false"
+         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
+         timeoutForSmallTests="1"
+         timeoutForMediumTests="10"
+         timeoutForLargeTests="60"
+         verbose="true" >
+    <testsuite name="[BB] PHProfiler - test suite">
+        <directory>./</directory>
+    </testsuite>
+    <listeners>
+        <listener class="MyListener" file="./MyListener.php">
+        </listener>
+    </listeners>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../src/</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log
+            type="coverage-html" 
+            target="../public/.reports/phpunit/" 
+            showUncoveredFiles="true"
+        />
+    </logging>
+</phpunit>

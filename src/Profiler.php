@@ -1,27 +1,26 @@
 <?php
+/**
+ * profiler main object
+ */
+namespace Profiler;
+
+use Profiler\Exception;
+use Profiler\Checkpoint;
+use Profiler\Checkpoint\CheckpointInterface;
+use Profiler\Checkpoint\CheckpointAbstract;
+use Profiler\Checkpoint\Dummy;
+use Profiler\Writer\WriterInterface;
 
 /**
  * profiler main object
  *
- * @category       php
- * @package        Profiler
- * @author         Björn Bartels <coding@bjoernbartels.earth>
- * @link           https://gitlab.bjoernbartels.earth/groups/php
- * @license        http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @copyright      copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
+ * @category  php
+ * @package   Profiler
+ * @author    Björn Bartels <coding@bjoernbartels.earth>
+ * @link      https://gitlab.bjoernbartels.earth/groups/php
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @copyright copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
  */
-
-/**
- * @see Profiler_Exception
- */
-require_once 'Profiler/Exception.php';
-
-/**
- * @see Profiler_Checkpoint
- */
-require_once 'Profiler/Checkpoint.php';
-
-
 class Profiler
 {
     /**
@@ -45,73 +44,97 @@ class Profiler
     const GIGABYTE = 'GB';
     
     /**
+     * initial profiling starting checkpoint
+     * 
      * @access protected
-     * @var    Profiler_Checkpoint_Abstract
+     * @var    Profiler\Checkpoint\CheckpointAbstract
      */
-    protected $_application = null;
+    protected $application = null;
     
     /**
+     * internal dummy checkpoint
+     * 
      * @access protected
-     * @var    Profiler_Checkpoint_Abstract
+     * @var    Profiler\Checkpoint\CheckpointAbstract
      */
-    protected $_dummy = null;
+    protected $dummy = null;
     
     /**
+     * list of checkpoints to profile
+     *
      * @access protected
      * @var    array
      */
-    protected $_checkpoints = array();
+    protected $checkpoints = array();
     
     /**
+     * time floating-point number precision
+     * 
      * @access protected
      * @var    integer
      */
-    protected $_timeFloating = 6;
+    protected $timeFloating = 6;
     
     /**
+     * memory floating-point number precision
+     * 
      * @access protected
      * @var    integer
      */
-    protected $_memoryFloating = 6;
+    protected $memoryFloating = 6;
     
     /**
+     * internal depth count
+     * 
      * @access protected
      * @var    integer
      */
-    protected $_depth = 0;
+    protected $depth = 0;
     
     /**
+     * (internal) memory unit sign divisor
+     * 
      * @access protected
      * @var    integer
      */
-    protected $_divisor = 1024;
+    protected $divisor = 1024;
     
     /**
+     * memory unit sign
+     * 
      * @access protected
      * @var    string
      */
-    protected $_divisorSign = self::MEGABYTE;
+    protected $divisorSign = self::MEGABYTE;
     
     /**
+     * get php's 'real' memory usage
+     * 
      * @access protected
      * @var    boolean
      */
-    protected $_useRealMemoryUsage = true;
+    protected $useRealMemoryUsage = false;
     
     /**
+     * writer instance
+     * 
      * @access protected
-     * @var    Profiler_Writer_Interface
+     * @var    Profiler\Writer\WriterInterface
      */
-    protected $_writer = null;
+    protected $writer = null;
     
     /**
+     * Profiler singleton object instance
+     * 
      * @static
      * @access protected
      * @var    Profiler
      */
-    protected static $_instance = null;
+    protected static $instance = null;
     
     /**
+     * create/get profiler instance
+     *  
      * @static
      * @access public
      * @param  array|Zend_Config $options
@@ -119,35 +142,36 @@ class Profiler
      */
     public static function getInstance($options = array())
     {
-        if (self::$_instance === null) {
-            self::$_instance = new self($options);
+        if (self::$instance === null) {
+            self::$instance = new self($options);
         }
-        return self::$_instance;
+        return self::$instance;
     }
     
     /**
+     * class constructor
+     * 
      * @access protected
      * @param  array $options
-     * @throws Profiler_Exception
+     * @throws Profiler\Exception
      * @return void
      */
     protected function __construct($options = array())
     {
-        if ($options instanceof Zend_Config) {
-            $options = $options->toArray();
-        }
         
         if (!is_array($options)) {
-            throw new Profiler_Exception('Invalid options format given.');
+            throw new Exception('Invalid options format given.');
         }
         
         foreach ($options as $name => $value)
         {
             $methodName = 'set' . ucfirst($name);
             if (!method_exists($this, $methodName)) {
-                throw new Profiler_Exception(sprintf(
-                    'Invalid or unknown option "%s".', $name
-                ));
+                throw new Exception(
+                    sprintf(
+                        'Invalid or unknown option "%s".', $name
+                    )
+                );
             }
             $this->$methodName($value);
         }
@@ -158,8 +182,11 @@ class Profiler
     }
     
     /**
+     * retrieve memory usage from system/php
+     * 
      * @access public
      * @return integer
+     * @see    http://php.net/manual/de/function.memory-get-usage.php
      */
     public static function getMemoryUsage()
     {
@@ -169,6 +196,8 @@ class Profiler
     }
     
     /**
+     * return current Unix timestamp with microseconds
+     * 
      * @access public
      * @return integer
      */
@@ -178,78 +207,96 @@ class Profiler
     }
     
     /**
+     * set to use php's 'real' memory usage
+     * 
      * @access public
      * @param  boolean $use
      * @return Profiler
+     * @see    http://php.net/manual/de/function.memory-get-usage.php
      */
     public function setRealMemoryUsage($use = true)
     {
-        $this->_useRealMemoryUsage = (bool)$use;
+        $this->useRealMemoryUsage = (bool)$use;
         return $this;
     }
     
     /**
+     * use php's 'real' memory usage?
+     * 
      * @access public
      * @return boolean
+     * @see    http://php.net/manual/de/function.memory-get-usage.php
      */
     public function getRealMemoryUsage()
     {
-        return $this->_useRealMemoryUsage;
+        return $this->useRealMemoryUsage;
     }
     
     /**
+     * set time and memory floating-point numbers precision
+     * 
      * @access public
      * @param  integer $floating
      * @return Profiler
      */
     public function setFloating($floating = 6)
     {
-        $this->_timeFloating = $floating;
-        $this->_memoryFloating = $floating;
+        $this->timeFloating = $floating;
+        $this->memoryFloating = $floating;
         return $this;
     }
     
     /**
+     * set time floating-point numbers precision
+     * 
      * @access public
      * @param  integer $floating
      * @return Profiler
      */
     public function setTimeFloating($floating = 6)
     {
-        $this->_timeFloating = $floating;
+        $this->timeFloating = $floating;
         return $this;
     }
     
     /**
+     * get time floating-point numbers precision
+     * 
      * @access public
      * @return integer
      */
     public function getTimeFloating()
     {
-        return $this->_timeFloating;
+        return $this->timeFloating;
     }
     
     /**
+     * set memory floating-point numbers precision
+     * 
      * @access public
      * @param  integer $floating
      * @return Profiler
      */
     public function setMemoryFloating($floating = 6)
     {
-        $this->_memoryFloating = $floating;
+        $this->memoryFloating = $floating;
         return $this;
     }
     
     /**
+     * get memory floating-point numbers precision
+     * 
      * @access public
      * @return integer
      */
     public function getMemoryFloating()
     {
-        return $this->_memoryFloating;
+        return $this->memoryFloating;
     }
     
     /**
+     * set memory unit sign and internal divisor
+     * 
      * @access public
      * @param  string $divisorSign
      * @throws Profiler_Exception
@@ -258,65 +305,76 @@ class Profiler
     public function setDivisorSign($divisorSign = self::MEGABYTE)
     {
         if ($divisorSign == self::BYTE) {
-            $this->_divisor = 1;
+            $this->divisor = 1;
         } elseif ($divisorSign == self::KILOBYTE) {
-            $this->_divisor = 1024;
+            $this->divisor = 1024;
         } elseif ($divisorSign == self::MEGABYTE) {
-            $this->_divisor = 1048576;
+            $this->divisor = 1048576;
         } elseif ($divisorSign == self::GIGABYTE) {
-            $this->_divisor = 1073741824;
+            $this->divisor = 1073741824;
         }
         else
         {
-            throw new Profiler_Exception(sprintf(
-                'Unknown divisor sign "%s".', $divisorSign
-            ));
+            throw new Exception(
+                sprintf(
+                    'Unknown divisor sign "%s".', $divisorSign
+                )
+            );
         }
         
-        $this->_divisorSign = $divisorSign;
+        $this->divisorSign = $divisorSign;
         return $this;
     }
     
     /**
+     * get internal divisor
+     * 
      * @access public
      * @return integer
      */
     public function getDivisor()
     {
-        return $this->_divisor;
+        return $this->divisor;
     }
     
     /**
+     * get memory unit sign
+     * 
      * @access public
      * @return string
      */
     public function getDivisorSign()
     {
-        return $this->_divisorSign;
+        return $this->divisorSign;
     }
     
     /**
+     * set if profiler is active
+     * 
      * @access public
      * @param  boolean $active
      * @return integer
      */
     public function setActive($active = true)
     {
-        $this->_active = (bool)$active;
+        $this->active = (bool)$active;
         return $this;
     }
     
     /**
+     * get if profiler is active
+     * 
      * @access public
-     * @uses   Profiler::getActive()
      * @return boolean
      */
     public function getActive()
     {
-        return $this->_active;
+        return $this->active;
     }
     
     /**
+     * is profiler active?
+     * 
      * @access public
      * @uses   Profiler::getActive()
      * @return boolean
@@ -327,138 +385,174 @@ class Profiler
     }
     
     /**
+     * set current profiling writer instance
+     * 
      * @access public
-     * @param  string|Profiler_Writer_Interface $writer
+     * @param  string|WriterInterface $writer
      * @return Profiler
      */
     public function setWriter($writer)
     {
         if (is_string($writer) && file_exists(__DIR__.'/Profiler/Writer/'.$writer.'.php')) {
-            $className = 'Profiler_Writer_' . $writer;
-            require_once (__DIR__.'/Profiler/Writer/'.$writer.'.php');
+            $className = 'Profiler\\Writer\\' . $writer;
             $writer = new $className($this);
         }
         
-        if (!$writer instanceof Profiler_Writer_Interface) {
-            throw new Profiler_Exception(
+        if (!$writer instanceof WriterInterface) {
+            throw new Exception(
                 'Given writer must be an instance of ' .
-                'Profiler_Writer_Interface.'
+                'Profiler\\Writer\\WriterInterface.'
             );
         }
         
-        $this->_writer = $writer;
+        $this->writer = $writer;
         return $this;
     }
     
     /**
+     * start profiling new checkpoint, increase internal depth count
+     * 
      * @access public
      * @param  string $title
-     * @throws Profiler_Exception
-     * @return Profiler_Checkpoint_Abstract
+     * @throws Profiler\Exception
+     * @return CheckpointAbstract
      */
     public function start($title)
     {
-        if (!$this->isActive())
-        {
-            if ($this->_dummy === null) {
-                require_once 'Profiler/Checkpoint/Dummy.php';
-                $this->_dummy = new Profiler_Checkpoint_Dummy('');
+        if (!$this->isActive()) {
+            if ($this->dummy === null) {
+                $this->dummy = new Dummy('');
             }
-            return $this->_dummy;
+            return $this->dummy;
         }
         
-        if (!count($this->_checkpoints))
-        {
-            $this->_attach($this->_application = new Profiler_Checkpoint(
-                'Application', $this->_depth = 0
-            ));
+        if (!count($this->checkpoints)) {
+            $this->attach(
+                $this->application = new Checkpoint(
+                    'Application', $this->depth = 0
+                )
+            );
         }
         
-        $this->_attach($checkpoint = new Profiler_Checkpoint(
-            $title, ++$this->_depth
-        ));
+        $this->attach(
+            $checkpoint = new Checkpoint(
+                $title, ++$this->depth
+            )
+        );
         
         return $checkpoint;
     }
     
     /**
+     * stop profiling a given checkpoint
+     * 
      * @access public
-     * @param  Profiler_Checkpoint_Abstract $checkpoint
+     * @param  CheckpointAbstract $checkpoint
      * @return Profiler
      */
-    public function stop(Profiler_Checkpoint_Abstract $checkpoint)
+    public function stop(CheckpointAbstract $checkpoint)
     {
         if ($this->isActive()) {
-            $this->_detach($checkpoint);
+            $this->detach($checkpoint);
         }
         return $this;
     }
     
     /**
+     * retrieve list of curretn checkpoints
+     * 
      * @access public
      * @return array
      */
     public function getCheckpoints()
     {
-        return $this->_checkpoints;
+        return $this->checkpoints;
     }
     
     /**
+     * empty the list of curretn checkpoints
+     * 
      * @access public
-     * @throws Profiler_Exception
+     * @return Profiler
+     */
+    public function clearCheckpoints()
+    {
+        $this->checkpoints = [];
+        return $this;
+    }
+    
+    /**
+     * invoke writer and create output
+     * 
+     * @access public
+     * @throws Exception
      * @return mixed
      */
     public function write()
     {
-        if (!$this->isActive())
-        {
-            throw new Profiler_Exception(sprintf(
-                'Cannot write profiling because profiler is not active.'
-            ));
+        if (!$this->isActive()) {
+            throw new Exception(
+                sprintf(
+                    'Cannot write profiling because profiler is not active.'
+                )
+            );
         }
         
-        if (!$this->_writer instanceof Profiler_Writer_Interface)
-        {
-            throw new Profiler_Exception(sprintf(
-                'Cannot write profiling because no valid writer was set.'
-            ));
+        if (!$this->writer instanceof WriterInterface) {
+            throw new Exception(
+                sprintf(
+                    'Cannot write profiling because no valid writer was set.'
+                )
+            );
         }
         
-        $this->_application->stop();
-        foreach ($this->_checkpoints as $checkpoint)
+        $this->application->stop();
+        foreach ($this->checkpoints as $checkpoint)
         {
             if (!$checkpoint->isActive()) {
                 continue;
             }
             
-            throw new Profiler_Exception(sprintf(
-                'Found active checkpoint: "%s".', $checkpoint->title
-            ));
+            throw new Exception(
+                sprintf(
+                    'Found active checkpoint: "%s".', $checkpoint->title
+                )
+            );
         }
         
-        return $this->_writer->get($this);
+        return $this->writer->get($this);
     }
     
     /**
+     * add new checkpoint to checkpoint-list
+     * 
      * @access protected
-     * @param  Profiler_Checkpoint_Abstract $checkpoint
+     * @param  CheckpointInterface $checkpoint
      * @return Profiler
      */
-    protected function _attach(Profiler_Checkpoint_Interface $checkpoint)
+    protected function attach(CheckpointInterface $checkpoint)
     {
-        $this->_checkpoints[] = $checkpoint;
+        $this->checkpoints[] = $checkpoint;
         return $this;
     }
     
     /**
+     * stops checkpoint, decrease internal depth count
+     * 
      * @access protected
-     * @param  Profiler_Checkpoint_Abstract $checkpoint
+     * @param  CheckpointAbstract $checkpoint
      * @return Profiler
      */
-    protected function _detach(Profiler_Checkpoint_Abstract $checkpoint)
+    protected function detach(CheckpointAbstract $checkpoint)
     {
-        --$this->_depth;
+        --$this->depth;
         $checkpoint->stop(false);
         return $this;
     }
+    
+    public static function destroy() 
+    {
+        self::$instance = null;
+    }
+    
 }

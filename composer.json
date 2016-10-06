@@ -1,10 +1,12 @@
 {
   "name" : "bjoernbartels.earth/profiler",
-  "description" : "php profiling class",
-  "version" : "0.0.1",
+  "description" : "simple php profiling class",
   "require" : {
     "composer/installers": "~1.0",
-    "php" : "^5.2 || ^7.0"
+    "php" : "^5.5 || ^7.0",
+    "phpunit/phpunit" : "^5",
+    "symfony/polyfill-mbstring" : "^1.1",
+    "codeclimate/php-test-reporter" : "*"
   },
   "license" : "Apache2.0",
   "keywords" : [ "profiler", "profiling", "analysis" ],

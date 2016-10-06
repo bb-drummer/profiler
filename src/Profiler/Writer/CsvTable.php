@@ -1,25 +1,31 @@
 <?php
+/**
+ * profiler CSV table writer
+ */
+namespace Profiler\Writer;
+
+use Profiler\Profiler;
+use Profiler\Checkpoint;
+use Profiler\Writer\WriterAbstract;
 
 /**
  * profiler CSV table writer
+ * 
+ * profiling data writer creating a comma-separated-value (CSV) list
  *
- * @category       php
- * @package        Profiler
- * @author         Björn Bartels <coding@bjoernbartels.earth>
- * @link           https://gitlab.bjoernbartels.earth/groups/php
- * @license        http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @copyright      copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
+ * @category  php
+ * @package   Profiler
+ * @author    Björn Bartels <coding@bjoernbartels.earth>
+ * @link      https://gitlab.bjoernbartels.earth/groups/php
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @copyright copyright (c) 2007 Björn Bartels <coding@bjoernbartels.earth>
  */
-
-/**
- * @see Profiler_Writer_Abstract
- */
-require_once 'Profiler/Writer/Abstract.php';
-
-class Profiler_Writer_CsvTable
-    extends Profiler_Writer_Abstract
+class CsvTable
+    extends WriterAbstract
 {
     /**
+     * get complete profiler output
+     * 
      * @access public
      * @return string
      */
@@ -27,7 +33,7 @@ class Profiler_Writer_CsvTable
     {
         $table = "Idx,Name,TimeStart,TimeStop,TimeDiff,MemoryStart,MemoryStop,MemoryDiff" . PHP_EOL;
         
-        $checkpoints = $this->_getProfiler()->getCheckpoints();
+        $checkpoints = $this->getProfiler()->getCheckpoints();
         $application = null;
         $indexLength = strlen(count($checkpoints));
         
@@ -37,7 +43,7 @@ class Profiler_Writer_CsvTable
                 $application = $checkpoint;
             }
             
-            $table .= $this->_getRow(
+            $table .= $this->getRow(
                 str_pad($index, $indexLength, '0', STR_PAD_LEFT),
                 $checkpoint,
                 $application
@@ -50,21 +56,22 @@ class Profiler_Writer_CsvTable
     }
     
     /**
+     * retrieve single row/checkpoint output
+     * 
      * @access protected
-     * @param  integer $index
-     * @param  Profiler_Checkpoint $checkpoint
-     * @param  Integernia_Profiler_Checkpoint $application
+     * @param  integer    $index
+     * @param  Checkpoint $checkpoint
+     * @param  Checkpoint $application
      * @return string
      */
-    protected function _getRow($index, Profiler_Checkpoint $checkpoint,
-                               Profiler_Checkpoint $application)
+    protected function getRow($index, Checkpoint $checkpoint, Checkpoint $application) 
     {
-        $profiler       = $this->_getProfiler();
+    
+        $profiler       = $this->getProfiler();
         $divisor        = $profiler->getDivisor();
         $divisorSign    = $profiler->getDivisorSign();
         
         $appStartTime   = $application->startTime;
-        $appStopTime    = $application->stopTime;
         
         $timeFloating   = $profiler->getTimeFloating();
         $rawStartTime   = $checkpoint->startTime;

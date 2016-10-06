@@ -1,0 +1,19 @@
+language: php
+
+addons:
+    code_climate:
+        repo_token: e834dafadc82e024f1918de0dfaa7ddea3e5dc9b35a2e0ce9e3c3a5d280bde71
+
+php:
+  - 5.6
+  - 7.0
+
+before_script:
+  - wget http://getcomposer.org/composer.phar
+  - php composer.phar install
+
+script: phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml
+
+after_script:
+  - vendor/bin/test-reporter
+
